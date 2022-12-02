@@ -1,14 +1,14 @@
-#' Calculate confidence intervals by bootstrap
-#' @description {Bootstrap Confidence intervals: the user must be able to choose (i) the significance level α  to obtain for the 1−α  confidence intervals for β , and (ii) the number of bootstraps which by default will be 20.}
-#' @param X An \eqn{n \times p} \code{double} value of the matrix containing the values of the predictors(Not including intercept).
-#' @param Y A factor vector indicating the category of response
-#' @param alpha A variable that indicating the significance level
-#' @param B A variable vector indicating the number of bootstraps(Default 20)
-#' @return Bootstrap Confidence intervals
-#' @author Tonghui Li
+#' confidence intervals by bootstrap
+#'
+#' @param X the values of the predictors
+#' @param y the values of the response
+#' @param alpha the significance level
+#' @param B  the number of bootstraps
+#'
+#' @return Confidence intervals
 #' @export
-#'
-#'
+#'@author Tonghui Li
+#' @examples
 interval<-function(X,y,alpha,B=20){
   n = nrow(X)
   p = ncol(X)

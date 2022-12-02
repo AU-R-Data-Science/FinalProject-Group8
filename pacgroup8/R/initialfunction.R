@@ -1,7 +1,25 @@
-#Initial values for optimization obtained from the least-squares formula (XTX)−1XTy
+#'initial beta
+#'Estimate the initial beta value
+#' @param X value of the predictors
+#' @param y  A factor vector indicating the category of response
+#' @return The initial beta value
+#' @export
+#' @author Tonghui Li
+#' @examples
 initialbeta<-function(X,y){
-  solve(t(X)%*%X)%*%t(X)%*%y
+  bata<-solve(t(X)%*%X)%*%t(X)%*%y
+  return(beta)
 }
+
+#' sum of the logistic function
+#' calaculate the summary based on the logistic function
+#' @param X value of the predictors
+#' @param y  A factor vector indicating the category of response
+#' @return sumary of beta value
+#' @export
+#' @author Tonghui Li
+#' @examples
+
 
 optimizing<-function(X,y,beta){
   n = nrow(X)
@@ -18,6 +36,20 @@ optimizing<-function(X,y,beta){
   return(sum(b))
 }
 
+
+
+
+
+
+
+#'Beta estimation
+#'Estimate the coefficient vector β which includes the independent variables/predictors plus the intercept
+#' @param X value of the predictors
+#' @param y  A factor vector indicating the category of response
+#' @return The optimal coefficient vector β
+#' @export
+#' @author Tonghui Li
+#' @examples
 estBeta<-function(X,y){
   betahat<-initialbeta(X,y)
   betan<-optim(betahat,optimizing,X,y)
