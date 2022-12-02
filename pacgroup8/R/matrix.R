@@ -1,11 +1,14 @@
-#' Calculate confusion_matrix
-#' @description {Calculate confusion_matrixthe following metrics:Prevalence,Accuracy,Sensitivity,Specificity,False Discovery Rate,Diagnostic Odds Ratio}
-#' @param X An \eqn{n \times p} \code{double} value of the matrix containing the values of the predictors(Not including intercept).
-#' @return confusion_matrix
-#' @author Tonghui Li
+#' Confusion matrix
+#' calculate the confusion matrix by comparing the predicted values with the true values
+#' @param X the values of the predictors
+#' @param y the values of the response
+#' @param bhat the loss value beta by logistic function
+#' @param cut The cut-off values for measuring metrics
+#'
+#' @return confusion matrix
 #' @export
 #'
-#'
+#' @examples
 confusion_matrix<-function(X,y,bhat,cut=0.5){
 
   yhat = (1/(1+exp(-X%*%bhat))>0.5)*1
