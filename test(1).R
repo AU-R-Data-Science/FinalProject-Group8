@@ -53,6 +53,16 @@ interval<-function(X,y,alpha,B=20){
 
 #Plot of the fitted logistic curve to the actual values 
 
+logiplot <- function(X, y, beta) {
+  fitmd <- optimizing(X, y, beta)
+  predata <- data.frame(X = seq(min(X), max(X), len = 1000))
+  
+  yhat = predict(fitmd, predata, type = "response")
+  
+  plot(y ~ X, col = "green")
+  lines(y ~ X, yhat, lwd = 2, col = "blue")
+}
+
 #The resulting ``Confusion Matrix’’ (see this link) using a cut-off value for prediction at 0.5 (i.e. assign value 1 for predictions above 0.5 and value 0 for prediction below or equal to 0.5). In addition, based on this cut-off value, also output the following metrics:
 confusion_matrix<-function(X,y,bhat,cut=0.5){
   
