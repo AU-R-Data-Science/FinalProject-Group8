@@ -1,4 +1,15 @@
+set.seed(1)
+install.packages("gtExtras")
+pak::pak("caret")
+install.packages("ggplot2")
 library(readxl)
+library(ggplot2)
+library(caret)
+library(gtExtras)
+library(gt)
+
+##Step 1: Asking the user to provide data in Excel or CSV format-Umer
+
 dataformat<-  readline(prompt = "Rename the data file to datasets.xlsx or datasets.csv and then press 1 (for XLSX data) or 2 (for CSV): ")
 
 if(dataformat=="1") {
@@ -9,22 +20,22 @@ if(dataformat=="1") {
   error <- "Please check the file name and respective selection based on XLSX or CSV (XLSX=1 or CSV=2 only)"
   error
 }
-
+##Step 2:Calculating the Intial Beta-Umer
 yk <- as.matrix(userdata$yk)
 xk <- as.matrix(userdata$xk)
 x <- 1:20
 xk <- matrix(c(xk, rep(1, length(x))), ncol = 2, nrow = 20)
+summary(lm(yk~xk))
+(beta <- MASS::ginv(t(xk) %*% xk) %*% t(xk) %*% yk)
 
-# Part-1: Initial values for optimization obtained from the least-squares formula
-model <- lm(yk~xk) #to check if beta was being calculated correctly.
-summary(lm(yk~xk))$coef #to check if beta was being calculated correctly.
-(beta <- MASS::ginv(t(xk) %*% xk) %*% t(xk) %*% yk) #to check if beta was being calculated correctly.
-
+##Step 3:Creating a Log function to calculate Logarithms of Negative Values-Umer
 Log <- function(xk, base = exp(1)) {
   LOG <- base::log(as.complex(xk), base = base)
   if (all(Im(LOG) == 0)) { LOG <- Re(LOG) }
   LOG }
 
+##Step 4: Creating Optimizing Function- Made by Tonghui Li and then Modified by Umer to include capability of processing complex numbers
+optimizing<-function(beta){
   n = nrow(xk)
   prob<-c()
   b<-c()
@@ -32,99 +43,86 @@ Log <- function(xk, base = exp(1)) {
   for (i in 1:n){
     prob[i]<-1/1+exp(t(-xk[i,])%*%beta)
   }
-
   for (i in 1:n){
     b[i]<-(-yk[i]*log(prob[i])-((1-yk[i])*Log(xk=1-prob[i])))
   }
- sum(b)
+ resultant <- sum(b)
+ real <- (Re(resultant))^2
+ imaginary <- (Im(resultant))^2
+ sqrt(real+imaginary)
+}
 
+optimizing(beta)
+betahat <- beta
+userdata <- as.data.frame(userdata)
+betan<-optim(par=beta,fn=optimizing)
+result<-list(betahat,betan)
 
-
-  betahat<-beta
-  betan<-optim(betahat,optimizing,xk,yk)
-  result<-list(betahat,betan)
-  return(result)
-
-
-
-
-#Part-2: Bootstrap Confidence intervals
+##Step 5: Bootstrap Confidence Intervals-Umer
 
 Bootstrap_CI <- function(alpha){
-##Initial Bootstrap
 
-# Number of boostrap replications
+#Number of boostrap replications
 B <- 20
 
-# Compute the length of vector
+#Compute the length of vector
 n <- length(xk)/2
 
-# Number of boostrap replications
+#Number of boostrap replications
 B <- 20
 
-# Confidence level
+#Confidence level
 alpha <- alpha
 
-# Initialisation of
+#Initialisation
 boot_beta <- rep(NA, B)
 
-# Step 1
+
 for (i in 1:B){
-  # Step 2
   xk_star <- xk[sample(1:n, replace = TRUE)]
   yk_star <- yk[sample(1:n, replace = TRUE)]
-
-  #yk_star <- as.matrix(yk_star)
-  #xk_star <- as.matrix(xk_star)
   x <- 1:20
   xk_star <- matrix(c(xk_star, rep(1, length(x))), ncol = 2, nrow = 20)
   dim(xk_star)
 
-  # Step 3
-  #yk_star <- as.matrix(yk_star)
-  #xk_star <- as.matrix(xk_star)
-
-  boot_beta[i] <- MASS::ginv(t(xk_star) %*% xk_star) %*% t(xk_star) %*% yk_star
-
+  suppressWarnings(boot_beta[i] <- MASS::ginv(t(xk_star) %*% xk_star) %*% t(xk_star) %*% yk_star)
 }
 
-
-# Step 4
 quantile(boot_beta, c(alpha/2, 1 - alpha/2))
 }
 
-#Part-3: Plot of the fitted logistic curve to the actual values
-#load dataset
+##Step 6: Plotting of the fitted logistic curve to the actual values-Umer
+##Step 6.1:load dataset
 a <- model.matrix(~xk+yk) [,-3]
 data <- a
 data <- as.data.frame(data)
 a <- as.data.frame(a)
-class(data)
-#split dataset into training and testing set
-set.seed(1)
+
+
+##Step 6.2: split dataset into training and testing set
 sample <- sample(c(TRUE, FALSE), nrow(data), replace=TRUE, prob=c(0.7,0.3))
 train <- as.data.frame(data[sample, ])
 test <- as.data.frame(data[!sample, ])
 
-#fit logistic regression model
+##Step 6.3: fit logistic regression model
 model <- glm(yk~xk1, family="binomial", data=train)
 summary(model)
 
-#plot logistic regression curve
+##Step 6.4:plot logistic regression curve
 library(ggplot2)
 ggplot(data, aes(x=xk1, y=yk)) +
   geom_point(alpha=.5) +
   stat_smooth(method="glm", se=FALSE, method.args = list(family=binomial))
 
 
-#Part-4: Creating Confusion Matrix
-#use model to predict probability of default
+##Step 7: Creating Confusion Matrix-Umer
+##Step 7.1:use model to predict probability of default
 predicted <- predict(model, test, type="response")
 
-#convert to 1's and 0's based on Cutoff Value
+##Step 7.2:convert to 1's and 0's based on Cutoff Value
 predicted1 <- ifelse(predicted > 0.5, 1, 0)
 
-#create confusion matrix
+##Step 7.3:create confusion matrix
 pak::pak("caret")
 library(caret)
 predicted1 <- as.factor(predicted1)
@@ -203,9 +201,8 @@ class(umer1)
 }
 
 umer2 <- umer1
-#umer2 <- do.call(data.frame, lapply(umer2, function(x) replace(x, is.infinite(x), NA)))
 umer2 <- as.data.frame(umer2)
-colnames(umer2) <- c("0.1 Cutoff", "0.2 Cutoff","0.3 Cutoff","0.4 Cutoff","0.5 Cutoff","0.6 Cutoff","0.7 Cutoff","0.8 Cutoff","0.9 Cutoff","Metrics")
+colnames(umer2) <- c("0.1 Cutoff", "0.2 Cutoff","0.3 Cutoff","0.4 Cutoff","0.5 Cutoff","0.6 Cutoff","0.7 Cutoff","0.8 Cutoff","0.9 Cutoff")
 umer0 <- c('Prevalence', 'Accuracy','Sensitivity','Specificity','False_Discovery_Rate','Diagnostic_Odds_Ratio')
 umer2$Metrics <- umer0
 umer3 <- cbind(umer0,umer2[,-10])
@@ -219,7 +216,7 @@ gt_theme_nytimes() %>%
 tab_header(title = "Metrics VS Prediction Cutoff")
 
 
-#Part-5: Plot of any of the  metrics evaluated over a grid of cut-off values for prediction going from 0.1 to 0.9 with steps of 0.1.
+##Step 8: Plot of any of the  metrics evaluated over a grid of cut-off values for prediction going from 0.1 to 0.9 with steps of 0.1-Umer
 umer4 <- umer3
 umer44 <- lapply(umer4,is.infinite)
 metricscheck <- sum(umer44[[1]])
@@ -241,10 +238,26 @@ yaxis <- umer2[index1]
 
 xaxis <- c(0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9)
 xaxis <- xaxis[index1]
-dataforplot <- cbind(umer0,xaxis,yaxis)
-colnames(dataforplot) <- c('Metrics', 'Cutoff_Value', 'Metrics_Value')
-library(ggplot2)
-ggplot(dataforplot) +
-  geom_point(aes(y= Metrics_Value, x=Cutoff_Value, color=Metrics))+scale_y_continuous(breaks=seq(0,1,0.1)) + scale_x_continuous(name='Cutoff Value for Prediction', limits=c(0.1,0.9), breaks=seq(0.1,0.9,0.1))+ggtitle("Metrics Values VS Cutoff Prediction Value(s)-for which All Six Metrics are Computable")
+dim(xaxis)
+dataforplot <- rbind(xaxis,yaxis) #umer0
+dataforplot2 <- dataforplot
+row.names(dataforplot2) <- c('Cutoff_Value','Prevalence', 'Accuracy','Sensitivity','Specificity','False_Discovery_Rate','Diagnostic_Odds_Ratio' )
 
-#Part-6: Help documentation
+ConfusionMetric <- c('Cutoff_Value','Prevalence', 'Accuracy','Sensitivity','Specificity','False_Discovery_Rate','Diagnostic_Odds_Ratio')
+
+dataforplot2$Metric <- ConfusionMetric
+dataforplot2[,-10]
+dataforplot3 <- cbind(ConfusionMetric,dataforplot2[,-10])
+
+rbind(dataforplot3[,c(1:2)],dataforplot3[,c(1,3)])
+dataforplot3[,c(1:2)]
+dataforplot3[,c(1,3)]
+
+
+dataforplot4 <- rbind(dataforplot3[,c(1:2)],dataforplot3[,c(1,3)])
+library(ggplot2)
+dataforplot3 <- as.data.frame(dataforplot3)
+class(dataforplot3)
+ggplot(dataforplot3) +
+  geom_point(aes(y= c(Prevalence, Accuracy,Sensitivity,Specificity,False_Discovery_Rate,Diagnostic_Odds_Ratio,x=Cutoff_Value), color=Metrics))+ scale_y_continuous(breaks=seq(0,1,0.1)) + scale_x_continuous(name='Cutoff Value for Prediction', limits=c(0.1,0.9), breaks=seq(0.1,0.9,0.1))+ggtitle("Metrics Values VS Cutoff Prediction Value(s)-for which All Six Metrics are Computable")
+
