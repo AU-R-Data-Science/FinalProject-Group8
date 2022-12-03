@@ -348,13 +348,13 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <p>GitHub page: <a href="https://github.com/AU-R-Data-Science/Final_Project-Group_8" class="uri">https://github.com/AU-R-Data-Science/Final_Project-Group_8</a></p>
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
-<p>This package is intended to implement logistic regression by using
-numberical optimiztion. It contains basic functions to perform logistic
-regression and obtain different outputs from the procedure. The outputs
-include: initial values for optimization, bootstrap, confidence
-intervals, logistic curve, confusion matrix, prevalence, accuracy,
-sensitivity, specificity, false discovery rate, and diagnostic odds
-ratio.</p>
+<p>This package (finalgroup8) is intended to implement logistic
+regression by using numerical optimization. It contains basic functions
+to perform logistic regression and obtain different outputs from the
+procedure. The outputs include: initial values for optimization,
+bootstrap, confidence intervals, logistic curve, confusion matrix,
+prevalence, accuracy, sensitivity, specificity, false discovery rate,
+and diagnostic odds ratio.</p>
 </div>
 <div id="process" class="section level2">
 <h2>Process</h2>
@@ -420,10 +420,10 @@ number of bootstraps which by default will be 20.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>logiplot <span class="ot">&lt;-</span> <span class="cf">function</span>(X, y, beta) {</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  fitmd <span class="ot">&lt;-</span> <span class="fu">optimizing</span>(X, y, beta)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  predata <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">X =</span> <span class="fu">seq</span>(<span class="fu">min</span>(X), <span class="fu">max</span>(X), <span class="at">len =</span> <span class="dv">1000</span>))</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  yhat <span class="ot">=</span> <span class="fu">predict</span>(fitmd, predata, <span class="at">type =</span> <span class="st">&quot;response&quot;</span>)</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>(y <span class="sc">~</span> X, <span class="at">col =</span> <span class="st">&quot;green&quot;</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>(y <span class="sc">~</span> X, <span class="at">col =</span> <span class="st">&quot;green&quot;</span>, <span class="at">main =</span> <span class="st">&quot;Logistic Curve&quot;</span>, <span class="at">xlab =</span> <span class="st">&quot;X&quot;</span>, <span class="at">ylab =</span> <span class="st">&quot;p&quot;</span>)</span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lines</span>(y <span class="sc">~</span> X, yhat, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">&quot;blue&quot;</span>)</span>
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>The resulting ``Confusion Matrix’’ using a cut-off value for
@@ -529,6 +529,56 @@ Odds Ratio.</p>
 <span id="cb5-95"><a href="#cb5-95" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb5-96"><a href="#cb5-96" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(Diagnostic_Odds_ration)</span>
 <span id="cb5-97"><a href="#cb5-97" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>prevalencegrid <span class="ot">&lt;-</span> <span class="cf">function</span>(X, y, bhat, <span class="at">cut =</span> <span class="fl">0.5</span>){</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  yhat <span class="ot">=</span> <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span><span class="sc">+</span><span class="fu">exp</span>(<span class="sc">-</span>X<span class="sc">%*%</span>bhat))</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ifelse</span>(yhat <span class="sc">&gt;</span> <span class="fl">0.5</span>,<span class="dv">1</span>,<span class="dv">0</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  tp <span class="ot">=</span> <span class="fu">sum</span>((yhat <span class="sc">==</span> <span class="dv">1</span>)<span class="sc">&amp;</span>(y <span class="sc">==</span> <span class="dv">1</span>))</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  fp <span class="ot">=</span> <span class="fu">sum</span>((yhat <span class="sc">==</span> <span class="dv">0</span>)<span class="sc">&amp;</span>(y <span class="sc">==</span> <span class="dv">1</span>))</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  tn <span class="ot">=</span> <span class="fu">sum</span>((yhat <span class="sc">==</span> <span class="dv">0</span>)<span class="sc">&amp;</span>(y <span class="sc">==</span> <span class="dv">0</span>))</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  fn <span class="ot">=</span> <span class="fu">sum</span>((yhat <span class="sc">==</span> <span class="dv">1</span>)<span class="sc">&amp;</span>(y <span class="sc">==</span> <span class="dv">0</span>))</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  Prevalence <span class="ot">=</span> (fn<span class="sc">+</span>tp)<span class="sc">/</span>(tp<span class="sc">+</span>fp<span class="sc">+</span>tn<span class="sc">+</span>fn)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  cut<span class="ot">&lt;-</span><span class="fu">seq</span>(<span class="fl">0.1</span>, <span class="fl">0.9</span>, <span class="at">by =</span> <span class="fl">0.1</span>)</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  Prevalence <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="cn">NA</span>, <span class="dv">9</span>, <span class="dv">1</span>)</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">9</span>){</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    value <span class="ot">&lt;-</span> cut[i]</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    Prevalence[i,] <span class="ot">&lt;-</span> <span class="fu">matrix</span>(X, y, value)</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(Prevalence)</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>The package (finalgroup8) implementing logistic regression using
+numerical optimization. The package must contain the basic functions to
+perform logistic regression (e.g. estimate the coefficient vector β
+which includes the independent variables/predictors plus the intercept)
+and obtain different outputs from the procedure. The outputs include:
+initial values for optimization bootstrap confidence intervals Logistic
+curve Confusion matrix prevalence accuracy sensitivity specificity false
+discovery rate diagnostic odds ratio</p>
+<p>install.packages(“devtools”)</p>
+<p>library(devtools)</p>
+<p>install_github(“AU-R-Data-Science/FinalProject-Group8/finalgroup8”)</p>
+<p>Descriptions of the relevant functions that can be used from this
+package</p>
+<p>initialbeta():This function can help calculating the initial beta
+value with X,y which are a matrix of beta and numerical vector</p>
+<p>optimizing():This function will based on the original logistic
+equation to calculate the summary of beta with X,y and beta X a matrix
+of beta and y a numerical vector</p>
+<p>estBeta(X,y): This function is used to calculate the beta estimation
+with list of beta hat and betan</p>
+<p>interval(X,y,alpha,B=20): This function will help to calculate the
+confidence interval with bootstrap with default number of 20.</p>
+<p>confusion_matrix(X,y,bhat,cut=0.5): This function will help to
+calculate the Confusion matrix</p>
+<p>Prevalence(X,y,bhat,cut=0.5) Accuracy(X,y,bhat,cut=0.5)
+Sensitivity(X,y,bhat,cut=0.5) Specificity(X,y,bhat,cut=0.5)
+False_Discovery_Rate(X,y,bhat,cut=0.5)
+Diagnostic_Odds_ration(X,y,bhat,cut=0.5) The six functions shows above
+can be used for calculating the six different metrics.</p>
+<p>prevalencegrid(X,y,bhat,cut=0.5): This one is used for plotting
+Prevalence over a grid of cut-off value.</p>
+<p>logiplot(X,y): This function can help to draw the logistic curve.</p>
 </div>
 
 
