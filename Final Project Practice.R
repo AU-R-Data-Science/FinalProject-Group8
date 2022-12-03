@@ -231,33 +231,17 @@ point8cutoff <- sum(umer44[[9]])
 point9cutoff <- sum(umer44[[10]])
 
 zzzz <- rbind(metricscheck, point1cutoff,point2cutoff,point3cutoff,point4cutoff,point5cutoff,point6cutoff,point7cutoff,point8cutoff,point9cutoff)
-zzzz <- zzzz[-1,]
+#zzzz <- zzzz[-1,]
 index1 <- which(zzzz!=1)
 
 yaxis <- umer2[index1]
 
 xaxis <- c(0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9)
 xaxis <- xaxis[index1]
-dim(xaxis)
-dataforplot <- rbind(xaxis,yaxis) #umer0
-dataforplot2 <- dataforplot
-row.names(dataforplot2) <- c('Cutoff_Value','Prevalence', 'Accuracy','Sensitivity','Specificity','False_Discovery_Rate','Diagnostic_Odds_Ratio' )
-
-ConfusionMetric <- c('Cutoff_Value','Prevalence', 'Accuracy','Sensitivity','Specificity','False_Discovery_Rate','Diagnostic_Odds_Ratio')
-
-dataforplot2$Metric <- ConfusionMetric
-dataforplot2[,-10]
-dataforplot3 <- cbind(ConfusionMetric,dataforplot2[,-10])
-
-rbind(dataforplot3[,c(1:2)],dataforplot3[,c(1,3)])
-dataforplot3[,c(1:2)]
-dataforplot3[,c(1,3)]
-
-
-dataforplot4 <- rbind(dataforplot3[,c(1:2)],dataforplot3[,c(1,3)])
+dataforplot <- cbind(umer0,xaxis,yaxis) 
+colnames(dataforplot) <- c('Metrics', 'Cutoff_Value', 'Metrics_Value')
+class(dataforplot)
 library(ggplot2)
-dataforplot3 <- as.data.frame(dataforplot3)
-class(dataforplot3)
-ggplot(dataforplot3) +
-  geom_point(aes(y= c(Prevalence, Accuracy,Sensitivity,Specificity,False_Discovery_Rate,Diagnostic_Odds_Ratio,x=Cutoff_Value), color=Metrics))+ scale_y_continuous(breaks=seq(0,1,0.1)) + scale_x_continuous(name='Cutoff Value for Prediction', limits=c(0.1,0.9), breaks=seq(0.1,0.9,0.1))+ggtitle("Metrics Values VS Cutoff Prediction Value(s)-for which All Six Metrics are Computable")
+ggplot(dataforplot) +
+  geom_point(aes(y= Metrics_Value, x=Cutoff_Value, color=Metrics))+scale_y_continuous(breaks=seq(0,1,0.1)) + scale_x_continuous(name='Cutoff Value for Prediction', limits=c(0.1,0.9), breaks=seq(0.1,0.9,0.1))+ggtitle("Metrics Values VS Cutoff Prediction Value(s)-for which All Six Metrics are Computable")
 
