@@ -1,7 +1,28 @@
-# Set Seed
-set.seed(1)
+---
+title: "Final Project"
+author: "Muhammad Umer"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
 
-# Packages and Libraries to be Loadaded
+
+```{r,eval=F, echo=T}
+introDS::runShiny('rmd')
+```
+# Set Seed
+
+The set seed is used to make the data analysis and as a matter of fact the research reproducible. In essence, allowing for reproducible research implies that anyone could run the code (knit the document, etc.) and obtain the same exact results as the original research and RMarkdown is commonly used to address this issue (Beckman et al.,2020). The user can input can a postive integer value in the parenthesis. 
+
+```{r, eval=F, echo=T}
+set.seed(1)
+```
+
+# Packages and Libraries to be Loaded
+```{r, eval=F, echo=T}
 install.packages("gtExtras")
 pak::pak("caret")
 install.packages("ggplot2")
@@ -10,10 +31,11 @@ library(ggplot2)
 library(caret)
 library(gtExtras)
 library(gt)
+```
 
-##Step 1: Asking the user to provide data in Excel or CSV format-Umer
-
-dataformat<-  readline(prompt = "Rename the data file to datasets.xlsx or datasets.csv and then press 1 (for XLSX data) or 2 (for CSV):")
+# Step 1: Asking the user to provide data in Excel or CSV format-Umer
+```{r, eval=F, echo=T}
+dataformat<-  readline(prompt = "Rename the data file to datasets.xlsx or datasets.csv and then press 1 (for XLSX data) or 2 (for CSV): ")
 
 if(dataformat=="1") {
   userdata <- read_excel('datasets.xlsx')
@@ -23,21 +45,29 @@ if(dataformat=="1") {
   error <- "Please check the file name and respective selection based on XLSX or CSV (XLSX=1 or CSV=2 only)"
   error
 }
-##Step 2:Calculating the Initial Beta-Umer
+```
+
+# Step 2:Calculating the Initial Beta-Umer
+```{r,eval=F, echo=T}
 yk <- as.matrix(userdata$yk)
 xk <- as.matrix(userdata$xk)
 x <- 1:20
 xk <- matrix(c(xk, rep(1, length(x))), ncol = 2, nrow = 20)
 summary(lm(yk~xk))
 (beta <- MASS::ginv(t(xk) %*% xk) %*% t(xk) %*% yk)
+```
 
-##Step 3:Creating a Log function to calculate Logarithms of Negative Values-Umer
+# Step 3:Creating a Log function to calculate Logarithms of Negative Values-Umer
+```{r,eval=F, echo=T}
 Log <- function(xk, base = exp(1)) {
   LOG <- base::log(as.complex(xk), base = base)
   if (all(Im(LOG) == 0)) { LOG <- Re(LOG) }
   LOG }
+```
 
-##Step 4: Creating Optimizing Function- Made by Tonghui Li and then Modified by Umer to include capability of processing complex numbers
+# Step 4: Creating Optimizing Function- Made by Tonghui Li and then Modified by Umer to include capability of processing complex numbers
+```{r,eval=F, echo=T}
+
 optimizing<-function(beta){
   n = nrow(xk)
   prob<-c()
@@ -60,9 +90,10 @@ betahat <- beta
 userdata <- as.data.frame(userdata)
 betan<-optim(par=beta,fn=optimizing)
 result<-list(betahat,betan)
+```
 
-##Step 5: Bootstrap Confidence Intervals-Umer
-
+# Step 5: Bootstrap Confidence Intervals-Umer
+```{r,eval=F, echo=T}
 Bootstrap_CI <- function(alpha){
 
 #Number of boostrap replications
@@ -93,8 +124,10 @@ for (i in 1:B){
 
 quantile(boot_beta, c(alpha/2, 1 - alpha/2))
 }
+```
 
-##Step 6: Plotting of the fitted logistic curve to the actual values-Umer
+# Step 6: Plotting of the fitted logistic curve to the actual values-Umer
+```{r,eval=F, echo=T}
 ##Step 6.1:load dataset
 a <- model.matrix(~xk+yk) [,-3]
 data <- a
@@ -116,9 +149,10 @@ library(ggplot2)
 ggplot(data, aes(x=xk1, y=yk)) +
   geom_point(alpha=.5) +
   stat_smooth(method="glm", se=FALSE, method.args = list(family=binomial))
+```
 
-
-##Step 7: Creating Confusion Matrix-Umer
+# Step 7: Creating Confusion Matrix-Umer
+```{r,eval=F, echo=T }
 ##Step 7.1:use model to predict probability of default
 predicted <- predict(model, test, type="response")
 
@@ -217,9 +251,11 @@ head(as.data.frame(umer3)) %>%
 gt() %>%
 gt_theme_nytimes() %>%
 tab_header(title = "Metrics VS Prediction Cutoff")
+```
 
+# Step 8: Plot of any of the  metrics evaluated over a grid of cut-off values for prediction going from 0.1 to 0.9 with steps of 0.1-Umer
+```{r,eval=F, echo=T}
 
-##Step 8: Plot of any of the  metrics evaluated over a grid of cut-off values for prediction going from 0.1 to 0.9 with steps of 0.1-Umer
 umer4 <- umer3
 umer44 <- lapply(umer4,is.infinite)
 metricscheck <- sum(umer44[[1]])
@@ -241,10 +277,11 @@ yaxis <- umer2[index1]
 
 xaxis <- c(0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9)
 xaxis <- xaxis[index1]
-dataforplot <- cbind(umer0,xaxis,yaxis)
+dataforplot <- cbind(umer0,xaxis,yaxis) 
 colnames(dataforplot) <- c('Metrics', 'Cutoff_Value', 'Metrics_Value')
 class(dataforplot)
 library(ggplot2)
 ggplot(dataforplot) +
   geom_point(aes(y= Metrics_Value, x=Cutoff_Value, color=Metrics))+scale_y_continuous(breaks=seq(0,1,0.1)) + scale_x_continuous(name='Cutoff Value for Prediction', limits=c(0.1,0.9), breaks=seq(0.1,0.9,0.1))+ggtitle("Metrics Values VS Cutoff Prediction Value(s)-for which All Six Metrics are Computable")
+```
 
