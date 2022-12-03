@@ -46,3 +46,4 @@ The six functions shows above can be used for calcultaing the six different metr
 
 prevalencegrid(X,y,bhat,cut=0.5): This one is used for ploting Prevalence over a grid of cut-off value.
 
+logiplot(X,y): This function can help to draw the logistic curve
