@@ -15,13 +15,14 @@ introDS::runShiny('rmd')
 ```
 # Set Seed
 
-The set seed is used to make the data analysis and as a matter of fact the research reproducible. In essence, allowing for reproducible research implies that anyone could run the code (knit the document, etc.) and obtain the same exact results as the original research and RMarkdown is commonly used to address this issue (Beckman et al.,2020). The user can input can a postive integer value in the parenthesis. 
+The set seed is used to make the data analysis and as a matter of fact the research reproducible. In essence, allowing for reproducible research implies that anyone could run the code (knit the document, etc.) and obtain the same exact results as the original research and RMarkdown is commonly used to address this issue (Beckman et al.,2020). The user can input can a positive integer value in the parenthesis. 
 
 ```{r, eval=F, echo=T}
 set.seed(1)
 ```
 
 # Packages and Libraries to be Loaded
+The following is the list of packages to be installed and/or libraries to be loaded for the various processes to be executed.
 ```{r, eval=F, echo=T}
 install.packages("gtExtras")
 pak::pak("caret")
@@ -34,6 +35,7 @@ library(gt)
 ```
 
 # Step 1: Asking the user to provide data in Excel or CSV format-Umer
+This is included to enable the user to provide the data set. The data set is provisioned for either XLSX or CSV based. The user is cautioned to rename the data set file in a particular naming convention and then select 1 for XLSX or 2 for CSV. If the user provides a file name other than specified or does not select 1 or 2, an error is generated. 
 ```{r, eval=F, echo=T}
 dataformat<-  readline(prompt = "Rename the data file to datasets.xlsx or datasets.csv and then press 1 (for XLSX data) or 2 (for CSV): ")
 
@@ -48,11 +50,13 @@ if(dataformat=="1") {
 ```
 
 # Step 2:Calculating the Initial Beta-Umer
+
 ```{r,eval=F, echo=T}
 yk <- as.matrix(userdata$yk)
 xk <- as.matrix(userdata$xk)
-x <- 1:20
-xk <- matrix(c(xk, rep(1, length(x))), ncol = 2, nrow = 20)
+x <- 1:length(yk)
+xx <- length(x)
+xk <- matrix(c(xk, rep(1, length(x))), ncol = 2, nrow = xx)
 summary(lm(yk~xk))
 (beta <- MASS::ginv(t(xk) %*% xk) %*% t(xk) %*% yk)
 ```

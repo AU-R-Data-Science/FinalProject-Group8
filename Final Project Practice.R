@@ -26,8 +26,9 @@ if(dataformat=="1") {
 ##Step 2:Calculating the Initial Beta-Umer
 yk <- as.matrix(userdata$yk)
 xk <- as.matrix(userdata$xk)
-x <- 1:20
-xk <- matrix(c(xk, rep(1, length(x))), ncol = 2, nrow = 20)
+x <- 1:length(yk)
+xx <- length(x)
+xk <- matrix(c(xk, rep(1, length(x))), ncol = 2, nrow = xx)
 summary(lm(yk~xk))
 (beta <- MASS::ginv(t(xk) %*% xk) %*% t(xk) %*% yk)
 
