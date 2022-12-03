@@ -3,9 +3,9 @@ Type: Package
 Title:  implementing logistic regression using numerical optimization
 Version: 0.1.0
 Authors@R: c(
-    person("Tonghui", "Li",  role = c("aut","cre")),
-    person("Chin-Hung", "Huang", role = "aut"),
-    person("Muhammad", "Umer", role = "aut")
+    person("Tonghui", "Li", email = "tzl0065@auburn.edu", role = c("aut", "cre")),
+    person("Chin-Hung", " Huang", email = "czh0162@auburn.edu", role = "aut"),
+    person("Muhammad", "Umer", email ="mzu0009@auburn.edu", role = "aut")
     )
 Maintainer: Tonghui Li <tzl0065@auburn.edu>
 Description: 
