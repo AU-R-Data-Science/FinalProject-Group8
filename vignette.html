@@ -14,7 +14,7 @@
 
 <meta name="date" content="2022-12-02" />
 
-<title>Final Project</title>
+<title>Final Project_Group 8</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -338,7 +338,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 
-<h1 class="title toc-ignore">Final Project</h1>
+<h1 class="title toc-ignore">Final Project_Group 8</h1>
 <h4 class="author">Muhammad Umer</h4>
 <h4 class="date">2022-12-02</h4>
 
@@ -347,20 +347,18 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>introDS<span class="sc">::</span><span class="fu">runShiny</span>(<span class="st">&#39;rmd&#39;</span>)</span></code></pre></div>
 <div id="set-seed" class="section level1">
 <h1>Set Seed</h1>
-<p><strong>Paragraph together (on one line):</strong></p>
-<p>When I first brought my cat home from the humane society she was a
-mangy, pitiful animal. It cost a lot to adopt her: forty dollars. And
-then I had to buy litter, a litterbox, food, and dishes for her to eat
-out of. Two days after she came home with me she got taken to the pound
-by the animal warden. There’s a leash law for cats in Fort Collins. If
-they’re not in your yard they have to be on a leash. Anyway, my cat is
-my best friend. I’m glad I got her. She sleeps under the covers with me
-when it’s cold. Sometimes she meows a lot in the middle of the night and
-wakes me up, though. (unfocused)</p>
+<p>The set seed is used to make the data analysis and as a matter of
+fact the research reproducible. In essence, allowing for reproducible
+research implies that anyone could run the code (knit the document,
+etc.) and obtain the same exact results as the original research and
+RMarkdown is commonly used to address this issue (Beckman et al.,2020).
+The user can input can a positive integer value in the parenthesis.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span></code></pre></div>
 </div>
 <div id="packages-and-libraries-to-be-loaded" class="section level1">
 <h1>Packages and Libraries to be Loaded</h1>
+<p>The following is the list of packages to be installed and/or
+libraries to be loaded for the various processes to be executed.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;gtExtras&quot;</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>pak<span class="sc">::</span><span class="fu">pak</span>(<span class="st">&quot;caret&quot;</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;ggplot2&quot;</span>)</span>
@@ -373,6 +371,11 @@ wakes me up, though. (unfocused)</p>
 <div id="step-1-asking-the-user-to-provide-data-in-excel-or-csv-format-umer" class="section level1">
 <h1>Step 1: Asking the user to provide data in Excel or CSV
 format-Umer</h1>
+<p>This is included to enable the user to provide the data set. The data
+set is provisioned for either XLSX or CSV based. The user is cautioned
+to rename the data set file in a particular naming convention and then
+select 1 for XLSX or 2 for CSV. If the user provides a file name other
+than specified or does not select 1 or 2, an error is generated.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>dataformat<span class="ot">&lt;-</span>  <span class="fu">readline</span>(<span class="at">prompt =</span> <span class="st">&quot;Rename the data file to datasets.xlsx or datasets.csv and then press 1 (for XLSX data) or 2 (for CSV): &quot;</span>)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(dataformat<span class="sc">==</span><span class="st">&quot;1&quot;</span>) {</span>
@@ -386,16 +389,24 @@ format-Umer</h1>
 </div>
 <div id="step-2calculating-the-initial-beta-umer" class="section level1">
 <h1>Step 2:Calculating the Initial Beta-Umer</h1>
+<p>The data from the user in Step 1 will be used to empirically
+calculate the beta for the linear model fitted on the data. The beta
+values are also verified via the summary function.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>yk <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(userdata<span class="sc">$</span>yk)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>xk <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(userdata<span class="sc">$</span>xk)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">20</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>xk <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(xk, <span class="fu">rep</span>(<span class="dv">1</span>, <span class="fu">length</span>(x))), <span class="at">ncol =</span> <span class="dv">2</span>, <span class="at">nrow =</span> <span class="dv">20</span>)</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">lm</span>(yk<span class="sc">~</span>xk))</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>(beta <span class="ot">&lt;-</span> MASS<span class="sc">::</span><span class="fu">ginv</span>(<span class="fu">t</span>(xk) <span class="sc">%*%</span> xk) <span class="sc">%*%</span> <span class="fu">t</span>(xk) <span class="sc">%*%</span> yk)</span></code></pre></div>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(yk)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>xx <span class="ot">&lt;-</span> <span class="fu">length</span>(x)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>xk <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(xk, <span class="fu">rep</span>(<span class="dv">1</span>, <span class="fu">length</span>(x))), <span class="at">ncol =</span> <span class="dv">2</span>, <span class="at">nrow =</span> xx)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">lm</span>(yk<span class="sc">~</span>xk))</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>(beta <span class="ot">&lt;-</span> MASS<span class="sc">::</span><span class="fu">ginv</span>(<span class="fu">t</span>(xk) <span class="sc">%*%</span> xk) <span class="sc">%*%</span> <span class="fu">t</span>(xk) <span class="sc">%*%</span> yk)</span></code></pre></div>
 </div>
-<div id="step-3creating-a-log-function-to-calculate-logarithms-of-negative-values-umer" class="section level1">
-<h1>Step 3:Creating a Log function to calculate Logarithms of Negative
+<div id="step-3-creating-a-log-function-to-calculate-logarithms-of-negative-values-umer" class="section level1">
+<h1>Step 3: Creating a Log function to calculate Logarithms of Negative
 Values-Umer</h1>
+<p>To able to compute the estimator to be computed using numerical
+optimization, it is necessary to allow the provision for a logarithmic
+value for negative number. This code allows the calculation logarithm of
+both positive and negative numbers.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>Log <span class="ot">&lt;-</span> <span class="cf">function</span>(xk, <span class="at">base =</span> <span class="fu">exp</span>(<span class="dv">1</span>)) {</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  LOG <span class="ot">&lt;-</span> base<span class="sc">::</span><span class="fu">log</span>(<span class="fu">as.complex</span>(xk), <span class="at">base =</span> base)</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">all</span>(<span class="fu">Im</span>(LOG) <span class="sc">==</span> <span class="dv">0</span>)) { LOG <span class="ot">&lt;-</span> <span class="fu">Re</span>(LOG) }</span>
@@ -405,6 +416,9 @@ Values-Umer</h1>
 <h1>Step 4: Creating Optimizing Function- Made by Tonghui Li and then
 Modified by Umer to include capability of processing complex
 numbers</h1>
+<p>The code computes the estimator to be computed using numerical
+optimization. It takes beta value from Step 2, x and y values provided
+by the user from Step 1.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>optimizing<span class="ot">&lt;-</span><span class="cf">function</span>(beta){</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">=</span> <span class="fu">nrow</span>(xk)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  prob<span class="ot">&lt;-</span><span class="fu">c</span>()</span>
@@ -430,6 +444,9 @@ numbers</h1>
 </div>
 <div id="step-5-bootstrap-confidence-intervals-umer" class="section level1">
 <h1>Step 5: Bootstrap Confidence Intervals-Umer</h1>
+<p>This code allows the user to choose (i) the significance level α to
+obtain for the 1−α confidence intervals for β, and (ii) the number of
+bootstraps which by default will be 20.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>Bootstrap_CI <span class="ot">&lt;-</span> <span class="cf">function</span>(alpha){</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">#Number of boostrap replications</span></span>
@@ -464,30 +481,34 @@ numbers</h1>
 <div id="step-6-plotting-of-the-fitted-logistic-curve-to-the-actual-values-umer" class="section level1">
 <h1>Step 6: Plotting of the fitted logistic curve to the actual
 values-Umer</h1>
+<p>The code plots the logistic curve. The code separates the data into
+train and test data (70:30) probability.</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="do">##Step 6.1:load dataset</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>a <span class="ot">&lt;-</span> <span class="fu">model.matrix</span>(<span class="sc">~</span>xk<span class="sc">+</span>yk) [,<span class="sc">-</span><span class="dv">3</span>]</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> a</span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(data)</span>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>a <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(a)</span>
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="do">##Step 6.2: split dataset into training and testing set</span></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>sample <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">FALSE</span>), <span class="fu">nrow</span>(data), <span class="at">replace=</span><span class="cn">TRUE</span>, <span class="at">prob=</span><span class="fu">c</span>(<span class="fl">0.7</span>,<span class="fl">0.3</span>))</span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>train <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(data[sample, ])</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>test <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(data[<span class="sc">!</span>sample, ])</span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="do">##Step 6.3: fit logistic regression model</span></span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">glm</span>(yk<span class="sc">~</span>xk1, <span class="at">family=</span><span class="st">&quot;binomial&quot;</span>, <span class="at">data=</span>train)</span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model)</span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="do">##Step 6.4:plot logistic regression curve</span></span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(data, <span class="fu">aes</span>(<span class="at">x=</span>xk1, <span class="at">y=</span>yk)) <span class="sc">+</span></span>
-<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha=</span>.<span class="dv">5</span>) <span class="sc">+</span></span>
-<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_smooth</span>(<span class="at">method=</span><span class="st">&quot;glm&quot;</span>, <span class="at">se=</span><span class="cn">FALSE</span>, <span class="at">method.args =</span> <span class="fu">list</span>(<span class="at">family=</span>binomial))</span></code></pre></div>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="do">##Step 6.2: split dataset into training and testing set</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>sample <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">FALSE</span>), <span class="fu">nrow</span>(data), <span class="at">replace=</span><span class="cn">TRUE</span>, <span class="at">prob=</span><span class="fu">c</span>(<span class="fl">0.7</span>,<span class="fl">0.3</span>))</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>train <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(data[sample, ])</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>test <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(data[<span class="sc">!</span>sample, ])</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="do">##Step 6.3: fit logistic regression model</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">glm</span>(yk<span class="sc">~</span>xk1, <span class="at">family=</span><span class="st">&quot;binomial&quot;</span>, <span class="at">data=</span>train)</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model)</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="do">##Step 6.4:plot logistic regression curve</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(data, <span class="fu">aes</span>(<span class="at">x=</span>xk1, <span class="at">y=</span>yk)) <span class="sc">+</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha=</span>.<span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_smooth</span>(<span class="at">method=</span><span class="st">&quot;glm&quot;</span>, <span class="at">se=</span><span class="cn">FALSE</span>, <span class="at">method.args =</span> <span class="fu">list</span>(<span class="at">family=</span>binomial))</span></code></pre></div>
 </div>
 <div id="step-7-creating-confusion-matrix-umer" class="section level1">
 <h1>Step 7: Creating Confusion Matrix-Umer</h1>
+<p>This code formulates a Confusion Matrix for the data along side it
+outputs various metrics of a respective confusion matrix of cut-off
+values for prediction going from 0.1 to 0.9 with steps of 0.1.</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="do">##Step 7.1:use model to predict probability of default</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>predicted <span class="ot">&lt;-</span> <span class="fu">predict</span>(model, test, <span class="at">type=</span><span class="st">&quot;response&quot;</span>)</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -590,6 +611,13 @@ values-Umer</h1>
 <div id="step-8-plot-of-any-of-the-metrics-evaluated-over-a-grid-of-cut-off-values-for-prediction-going-from-0.1-to-0.9-with-steps-of-0.1-umer" class="section level1">
 <h1>Step 8: Plot of any of the metrics evaluated over a grid of cut-off
 values for prediction going from 0.1 to 0.9 with steps of 0.1-Umer</h1>
+<p>The code uses the data from Step 7 and plots the metrics evaluated
+over a grid of cut-off values for prediction going from 0.1 to 0.9 with
+steps of 0.1. However, only those Metrics Values against Cutoff
+Prediction Value(s) are plotting for which all six metrics
+(i.e. Prevalence,
+Accuracy,Sensitivity,Specificity,False_Discovery_Rate,Diagnostic_Odds_Ratio)
+are computable.</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>umer4 <span class="ot">&lt;-</span> umer3</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>umer44 <span class="ot">&lt;-</span> <span class="fu">lapply</span>(umer4,is.infinite)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>metricscheck <span class="ot">&lt;-</span> <span class="fu">sum</span>(umer44[[<span class="dv">1</span>]])</span>

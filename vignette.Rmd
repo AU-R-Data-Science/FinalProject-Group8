@@ -1,5 +1,5 @@
 ---
-title: "Final Project"
+title: "Final Project_Group 8"
 author: "Muhammad Umer"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -13,6 +13,7 @@ vignette: >
 ```{r,eval=F, echo=T}
 introDS::runShiny('rmd')
 ```
+
 # Set Seed
 
 The set seed is used to make the data analysis and as a matter of fact the research reproducible. In essence, allowing for reproducible research implies that anyone could run the code (knit the document, etc.) and obtain the same exact results as the original research and RMarkdown is commonly used to address this issue (Beckman et al.,2020). The user can input can a positive integer value in the parenthesis. 
@@ -50,7 +51,7 @@ if(dataformat=="1") {
 ```
 
 # Step 2:Calculating the Initial Beta-Umer
-
+The data from the user in Step 1 will be used to empirically calculate the beta for the linear model fitted on the data. The beta values are also verified via the summary function. 
 ```{r,eval=F, echo=T}
 yk <- as.matrix(userdata$yk)
 xk <- as.matrix(userdata$xk)
@@ -61,7 +62,8 @@ summary(lm(yk~xk))
 (beta <- MASS::ginv(t(xk) %*% xk) %*% t(xk) %*% yk)
 ```
 
-# Step 3:Creating a Log function to calculate Logarithms of Negative Values-Umer
+# Step 3: Creating a Log function to calculate Logarithms of Negative Values-Umer
+To able to compute the estimator to be computed using numerical optimization, it is necessary to allow the provision for a logarithmic value for negative number. This code allows the calculation logarithm of both positive and negative numbers.
 ```{r,eval=F, echo=T}
 Log <- function(xk, base = exp(1)) {
   LOG <- base::log(as.complex(xk), base = base)
@@ -70,6 +72,7 @@ Log <- function(xk, base = exp(1)) {
 ```
 
 # Step 4: Creating Optimizing Function- Made by Tonghui Li and then Modified by Umer to include capability of processing complex numbers
+The code computes the estimator to be computed using numerical optimization. It takes beta value from Step 2, x and y values provided by the user from Step 1.
 ```{r,eval=F, echo=T}
 
 optimizing<-function(beta){
@@ -97,6 +100,7 @@ result<-list(betahat,betan)
 ```
 
 # Step 5: Bootstrap Confidence Intervals-Umer
+This code allows the user to choose (i) the significance level α to obtain for the 1−α confidence intervals for β, and (ii) the number of bootstraps which by default will be 20.
 ```{r,eval=F, echo=T}
 Bootstrap_CI <- function(alpha){
 
@@ -131,13 +135,13 @@ quantile(boot_beta, c(alpha/2, 1 - alpha/2))
 ```
 
 # Step 6: Plotting of the fitted logistic curve to the actual values-Umer
+The code plots the logistic curve. The code separates the data into train and test data (70:30) probability. 
 ```{r,eval=F, echo=T}
 ##Step 6.1:load dataset
 a <- model.matrix(~xk+yk) [,-3]
 data <- a
 data <- as.data.frame(data)
 a <- as.data.frame(a)
-
 
 ##Step 6.2: split dataset into training and testing set
 sample <- sample(c(TRUE, FALSE), nrow(data), replace=TRUE, prob=c(0.7,0.3))
@@ -156,6 +160,7 @@ ggplot(data, aes(x=xk1, y=yk)) +
 ```
 
 # Step 7: Creating Confusion Matrix-Umer
+This code formulates a Confusion Matrix for the data along side it outputs various metrics of a respective confusion matrix of cut-off values for prediction going from 0.1 to 0.9 with steps of 0.1.
 ```{r,eval=F, echo=T }
 ##Step 7.1:use model to predict probability of default
 predicted <- predict(model, test, type="response")
@@ -258,8 +263,8 @@ tab_header(title = "Metrics VS Prediction Cutoff")
 ```
 
 # Step 8: Plot of any of the  metrics evaluated over a grid of cut-off values for prediction going from 0.1 to 0.9 with steps of 0.1-Umer
+The code uses the data from Step 7 and plots the metrics evaluated over a grid of cut-off values for prediction going from 0.1 to 0.9 with steps of 0.1. However, only those Metrics Values against Cutoff Prediction Value(s) are plotting for which all six metrics (i.e. Prevalence, Accuracy,Sensitivity,Specificity,False_Discovery_Rate,Diagnostic_Odds_Ratio) are computable.
 ```{r,eval=F, echo=T}
-
 umer4 <- umer3
 umer44 <- lapply(umer4,is.infinite)
 metricscheck <- sum(umer44[[1]])
