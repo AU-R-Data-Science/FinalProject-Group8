@@ -86,10 +86,10 @@ Plot of the fitted logistic curve to the actual values.
 logiplot <- function(X, y, beta) {
   fitmd <- optimizing(X, y, beta)
   predata <- data.frame(X = seq(min(X), max(X), len = 1000))
-  
+
   yhat = predict(fitmd, predata, type = "response")
-  
-  plot(y ~ X, col = "green")
+
+  plot(y ~ X, col = "green", main = "Logistic Curve", xlab = "X", ylab = "p")
   lines(y ~ X, yhat, lwd = 2, col = "blue")
 }
 ```
