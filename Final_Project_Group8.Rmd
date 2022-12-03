@@ -17,7 +17,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Introduction
 
-This package is intended to implement logistic regression by using numberical optimiztion. It contains basic functions to perform logistic regression and obtain different outputs from the procedure. The outputs include: initial values for optimization, bootstrap, confidence intervals,  logistic curve, confusion matrix, prevalence, accuracy, sensitivity, specificity, false discovery rate, and diagnostic odds ratio.
+This package (finalgroup8) is intended to implement logistic regression by using numerical optimization. It contains basic functions to perform logistic regression and obtain different outputs from the procedure. The outputs include: initial values for optimization, bootstrap, confidence intervals,  logistic curve, confusion matrix, prevalence, accuracy, sensitivity, specificity, false discovery rate, and diagnostic odds ratio.
 
 ## Process
 Initial values for optimization obtained from the least-squares formula $(X^TX)X^Ty$.
@@ -193,3 +193,48 @@ Diagnostic_Odds_ration <- function(X, y, bhat, cut = 0.5){
   return(Diagnostic_Odds_ration)
 }
 ```
+```{r pregrid}
+prevalencegrid <- function(X, y, bhat, cut = 0.5){
+  yhat = 1/(1+exp(-X%*%bhat))
+  ifelse(yhat > 0.5,1,0)
+  tp = sum((yhat == 1)&(y == 1))
+  fp = sum((yhat == 0)&(y == 1))
+  tn = sum((yhat == 0)&(y == 0))
+  fn = sum((yhat == 1)&(y == 0))
+
+  Prevalence = (fn+tp)/(tp+fp+tn+fn)
+  cut<-seq(0.1, 0.9, by = 0.1)
+  Prevalence <- matrix(NA, 9, 1)
+  for (i in 1:9){
+    value <- cut[i]
+    Prevalence[i,] <- matrix(X, y, value)
+  }
+  return(Prevalence)
+
+}
+```
+The package (finalgroup8) implementing logistic regression using numerical optimization. The package must contain the basic functions to perform logistic regression (e.g. estimate the coefficient vector β which includes the independent variables/predictors plus the intercept) and obtain different outputs from the procedure. The outputs include: initial values for optimization bootstrap confidence intervals Logistic curve Confusion matrix prevalence accuracy sensitivity specificity false discovery rate diagnostic odds ratio
+
+install.packages("devtools")
+
+library(devtools)
+
+install_github("AU-R-Data-Science/FinalProject-Group8/finalgroup8")
+
+Descriptions of the relevant functions that can be used from this package
+
+initialbeta():This function can help calculating the initial beta value with X,y which are a matrix of beta and numerical vector
+
+optimizing():This function will based on the original logistic equation to calculate the summary of beta with X,y and beta X a matrix of beta and y a numerical vector
+
+estBeta(X,y): This function is used to calculate the beta estimation with list of beta hat and betan
+
+interval(X,y,alpha,B=20): This function will help to calculate the confidence interval with bootstrap with default number of 20.
+
+confusion_matrix(X,y,bhat,cut=0.5): This function will help to calculate the Confusion matrix
+
+Prevalence(X,y,bhat,cut=0.5) Accuracy(X,y,bhat,cut=0.5) Sensitivity(X,y,bhat,cut=0.5) Specificity(X,y,bhat,cut=0.5) False_Discovery_Rate(X,y,bhat,cut=0.5) Diagnostic_Odds_ration(X,y,bhat,cut=0.5) The six functions shows above can be used for calculating the six different metrics.
+
+prevalencegrid(X,y,bhat,cut=0.5): This one is used for plotting Prevalence over a grid of cut-off value.
+
+logiplot(X,y): This function can help to draw the logistic curve.
