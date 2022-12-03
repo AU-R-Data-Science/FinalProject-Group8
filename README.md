@@ -13,5 +13,10 @@ false discovery rate
 diagnostic odds ratio
 
 install.packages("devtools")
+
+
 library(devtools)
+
+
+
 install_github("AU-R-Data-Science/FinalProject-Group8/finalgroup8")
