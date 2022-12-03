@@ -7,7 +7,7 @@ Authors@R: c(
     person("Chin-Hung", "Huang", role = "aut"),
     person("Muhammad", "Umer", role = "aut")
     )
-Maintainer: Tonghui Li<tzl0065@auburn.edu>
+Maintainer: Tonghui Li <tzl0065@auburn.edu>
 Description: 
     1. Initial coefficient vector
     2. Bootstrap Confidence intervals
