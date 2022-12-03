@@ -1,0 +1,21 @@
+Package: finalgroup8
+Type: Package
+Title:  implementing logistic regression using numerical optimization
+Version: 0.1.0
+Authors@R: c(
+    person("Tonghui", "Li", email = "tzl0065@auburn.edu", role = c("aut", "cre")),
+    person("Chin-Hung", " Huang", email = "czh0162@auburn.edu", role = "aut"),
+    person("Muhammad", "Umer", email ="mzu0009@auburn.edu", role = "aut")
+    )
+Maintainer: Tonghui Li <tzl0065@auburn.edu>
+Description: 
+    1. Initial coefficient vector
+    2. Bootstrap Confidence intervals
+    3. The fitted logistic curve
+    4. Confusion Matrix
+    5.Prevalence, Accuracy, Sensitivity, Specificity, False Discovery Rate,Diagnostic Odds Ratio
+    6. The evaluation chart of the metrics with different cut-off values.
+License: GPL
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.2.1

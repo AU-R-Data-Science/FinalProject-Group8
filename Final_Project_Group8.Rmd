@@ -1,0 +1,195 @@
+---
+title: "Final Project - Group8"
+author: "Chin-Hung Huang, Tonghui Li, and Muhammad Umer"
+date: "2022-12-02"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Final_Project_8}
+  %\VignetteEncoding{UTF-8}
+---
+
+GitHub page: <https://github.com/AU-R-Data-Science/Final_Project-Group_8>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+This package is intended to implement logistic regression by using numberical optimiztion. It contains basic functions to perform logistic regression and obtain different outputs from the procedure. The outputs include: initial values for optimization, bootstrap, confidence intervals,  logistic curve, confusion matrix, prevalence, accuracy, sensitivity, specificity, false discovery rate, and diagnostic odds ratio.
+
+## Process
+Initial values for optimization obtained from the least-squares formula $(X^TX)X^Ty$.
+```{r initial}
+initialbeta <- function(X, y) {
+  solve(t(X)%*%X)%*%t(X)%*%y
+}
+```
+The estimator to be computed using numerical optimization is the following $$\hat{\beta} :=  \sum_{i=1}^{n}(-y_i ⋅ln(p_i)-(1-y_i)⋅ln(1-p_i) ) $$
+where, $$p_i := \frac{1}{1+exp(-x_i^T\beta)}$$
+and $y_i$ and $x_i$ represent the $i^{th}$ observation and row of the response and the predictors respectively.
+
+```{r optim}
+optimizing <- function(X, y, beta) {
+  n = nrow(X)
+  prob <- c()
+  b <- c() 
+  n = length(y)
+  for (i in 1:n){
+    prob[i] <- 1/1+exp(t(-X[i,])%*%beta)
+  }
+  
+  for (i in 1:n){
+    b[i] <- (-y[i]*log(prob[i])-(1-y[i])*log(1-prob[i]))
+  }
+ return(sum(b))
+}
+
+estBeta <- function(X, y) {
+  betahat <- initialbeta(X, y)
+  betan <- optim(betahat, optimizing, X, y)
+  result <- list(betahat,betan)
+  return(result)
+}
+```
+Bootstrap Confidence intervals: the user must be able to choose (i) the significance level $\alpha$ to obtain for the $1−\alpha$ confidence intervals for $\beta$, and (ii) the number of bootstraps which by default will be 20.
+
+```{r ci}
+interval <- function(X, y, alpha, B = 20){
+  n = nrow(X)
+  p = ncol(X)
+  
+  beta_B = matrix(0, p, B)
+  
+  for (b in 1:B) {
+    ind = sample(1:n,n,replace = TRUE)    
+    X_b = X[,ind]
+    y_b = y[ind]
+    
+    beta_B[, b] = estBeta(X_b, y_b)
+  }
+  
+  upper = apply(beta_B, 1, quantile, 1-alpha)
+  lower = apply(beta_B, 1, quantile, alpha)
+  
+  beta_ci = cbind(lower,upper)
+  
+  return(beta_ci)
+}
+
+```
+
+Plot of the fitted logistic curve to the actual values.
+
+```{r plot}
+logiplot <- function(X, y, beta) {
+  fitmd <- optimizing(X, y, beta)
+  predata <- data.frame(X = seq(min(X), max(X), len = 1000))
+  
+  yhat = predict(fitmd, predata, type = "response")
+  
+  plot(y ~ X, col = "green")
+  lines(y ~ X, yhat, lwd = 2, col = "blue")
+}
+```
+The resulting ``Confusion Matrix’’ using a cut-off value for prediction at 0.5 (i.e. assign value 1 for predictions above 0.5 and value 0 for prediction below or equal to 0.5). In addition, based on this cut-off value, also output the following metrics: Prevalence, Accuracy, Sensitivity, Specificity, False Discovery Rate, and Diagnostic Odds Ratio.
+```{r cm}
+confusion_matrix <- function(X, y, bhat, cut = 0.5){
+  
+  yhat = (1/(1+exp(-X%*%bhat)) > 0.5)*1
+  
+  tp = sum((yhat==1)&(y==1)) 
+  fp = sum((yhat==0)&(y==1)) 
+  tn = sum((yhat==0)&(y==0)) 
+  fn = sum((yhat==1)&(y==0)) 
+  conf_mat = cbind(c(tp, fp), c(fn, tn))
+  
+  return(conf_mat)
+}
+
+Prevalence <- function(X, y, bhat, cut = 0.5){
+  
+  yhat = (1/(1+exp(-X%*%bhat)) > 0.5)*1
+  
+  tp = sum((yhat==1)&(y==1)) 
+  fp = sum((yhat==0)&(y==1)) 
+  tn = sum((yhat==0)&(y==0)) 
+  fn = sum((yhat==1)&(y==0)) 
+  
+  Prevalence = (fn+tp)/(tp+fp+tn+fn)
+  
+  return(Prevalence)
+}
+
+
+
+Accuracy <- function(X, y, bhat, cut = 0.5){
+  
+  yhat = (1/(1+exp(-X%*%bhat)) > 0.5)*1
+  tp = sum((yhat==1)&(y==1)) 
+  fp = sum((yhat==0)&(y==1)) 
+  tn = sum((yhat==0)&(y==0)) 
+  fn = sum((yhat==1)&(y==0)) 
+  
+  Accuracy = (tn+tp)/(tp+fp+tn+fn)
+  
+  return(Accuracy)
+}
+
+
+Sensitivity <- function(X, y, bhat, cut = 0.5){
+  
+  yhat = (1/(1+exp(-X%*%bhat)) > 0.5)*1
+  tp = sum((yhat==1)&(y==1)) 
+  fp = sum((yhat==0)&(y==1)) 
+  tn = sum((yhat==0)&(y==0)) 
+  fn = sum((yhat==1)&(y==0)) 
+  
+  Sensitivity = tp/(tp+fn)
+  
+  return(Sensitivity)
+}
+
+
+Specificity <- function(X, y, bhat, cut = 0.5){
+  
+  yhat = (1/(1+exp(-X%*%bhat)) > 0.5)*1
+  tp = sum((yhat==1)&(y==1)) 
+  fp = sum((yhat==0)&(y==1)) 
+  tn = sum((yhat==0)&(y==0)) 
+  fn = sum((yhat==1)&(y==0)) 
+  
+  Specificity = tn/(tn+fp)
+  
+  return(Specificity)
+}
+
+
+False_Discovery_Rate <- function(X, y, bhat, cut = 0.5){
+  
+  yhat = (1/(1+exp(-X%*%bhat)) > 0.5)*1
+  tp = sum((yhat==1)&(y==1)) 
+  fp = sum((yhat==0)&(y==1)) 
+  tn = sum((yhat==0)&(y==0)) 
+  fn = sum((yhat==1)&(y==0)) 
+  
+  False_Discovery_Rate= fp/(tp+fp)
+  
+  return(False_Discovery_Rate)
+}
+
+Diagnostic_Odds_ration <- function(X, y, bhat, cut = 0.5){
+  
+  yhat = (1/(1+exp(-X%*%bhat)) > 0.5)*1
+  tp = sum((yhat==1)&(y==1)) 
+  fp = sum((yhat==0)&(y==1)) 
+  tn = sum((yhat==0)&(y==0)) 
+  fn = sum((yhat==1)&(y==0)) 
+  
+  Diagnostic_Odds_ration = (sensitivity / False_Discovery_Rate) / (False_Discovery_Rate/ specificity)
+
+  
+  return(Diagnostic_Odds_ration)
+}
+```
